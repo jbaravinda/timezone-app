@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timezone Finder</title>
+    <script>
+        async function fetchTimezone() {
+            const location = document.getElementById("location").value;
+            const response = await fetch(`/timezone?location=${location}`);
+            const data = await response.json();
+            document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+        }
+    </script>
+</head>
+<body>
+    <h2>Timezone Finder</h2>
+    <input type="text" id="location" placeholder="Enter a city or country">
+    <button onclick="fetchTimezone()">Search</button>
+    <pre id="result"></pre>
+</body>
+</html>
