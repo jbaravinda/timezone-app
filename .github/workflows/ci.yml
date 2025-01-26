@@ -1,0 +1,43 @@
+name: Build and Deploy to Docker Hub
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/timezone-app:latest .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/timezone-app:latest
+
+      - name: Checkout deployment repo
+        uses: actions/checkout@v4
+        with:
+          repository: jbaravinda/timezone-deploy
+          token: ${{ secrets.GH_PAT }}
+          path: deploy_repo
+
+      - name: Update Kubernetes manifests
+        run: |
+          cd deploy_repo
+          sed -i 's|IMAGE_PLACEHOLDER|${{ secrets.DOCKERHUB_USERNAME }}/timezone-app:latest|g' k8s/deployment.yaml
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update image to latest"
+          git push
