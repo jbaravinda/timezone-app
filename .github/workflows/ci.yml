@@ -39,7 +39,7 @@ jobs:
       - name: Update Kubernetes manifests
         run: |
           cd k8s
-          sed -i 's|IMAGE_PLACEHOLDER|${{ secrets.DOCKERHUB_USERNAME }}/timezone-app:${{env.VERSION}}|g' deployment.yaml
+          sed -i 's|image: ${{ secrets.DOCKERHUB_USERNAME }}/timezone-app:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/timezone-app:${{env.VERSION}}|g' deployment.yaml
           git config user.name "jbaravinda"
           git config user.email "jbaravindadiascis@gmail.com"
           git add .
