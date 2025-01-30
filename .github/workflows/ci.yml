@@ -30,12 +30,12 @@ jobs:
         with:
           repository: jbaravinda/timezone-deploy
           token: ${{ secrets.GH_PAT }}
-          path: /
+          # path: /
 
       - name: Update Kubernetes manifests
         run: |
-          cd /
-          sed -i 's|IMAGE_PLACEHOLDER|${{ secrets.DOCKERHUB_USERNAME }}/timezone-app:latest|g' k8s/deployment.yaml
+          cd k8s
+          sed -i 's|IMAGE_PLACEHOLDER|${{ secrets.DOCKERHUB_USERNAME }}/timezone-app:latest|g' deployment.yaml
           git config user.name "jbaravinda"
           git config user.email "jbaravindadiascis@gmail.com"
           git add .
